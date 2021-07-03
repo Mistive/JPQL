@@ -17,17 +17,26 @@ public class jpaMain {
         EntityTransaction tx = em.getTransaction();
         tx.begin();
         try {
-            Member member = new Member();
-            member.setUsername("member1");
-            member.setAge(10);
-            em.persist(member);
 
-            Member result = em.createQuery("select m from Member m where m.username = :un", Member.class)
-                    .setParameter("un", "member1")
-                    .getSingleResult();
-            System.out.println("result.getUsername() = " + result.getUsername());
+            for (int i = 0; i < 100; i++) {
+                Member member = new Member();
+                member.setUsername("member" + i);
+                member.setAge(i);
+                em.persist(member);
+            }
 
+            em.flush();
+            em.clear();
 
+            List<Member> result = em.createQuery("select m from Member m order by m.age desc ", Member.class)
+                    .setFirstResult(1)
+                    .setMaxResults(10)
+                    .getResultList();
+
+            System.out.println("resultList.size() = " + result.size());
+            for (Member member1 : result) {
+                System.out.println("member1 = " + member1);
+            }
 
             tx.commit();
         } catch (Exception e) {
