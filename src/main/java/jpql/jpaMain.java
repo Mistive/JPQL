@@ -42,16 +42,22 @@ public class jpaMain {
             member3.setTeam(teamB);
             em.persist(member3);
 
-            em.flush();
+            //모든 회원의 나이를 20살로 바꿔!
+            int resultCount = em.createQuery("update Member m set m.age = 20")
+                    .executeUpdate();
+            System.out.println("resultCount = " + resultCount);
+
+            System.out.println("member1.getAge() = " + member1.getAge());
+            System.out.println("member2.getAge() = " + member2.getAge());
+            System.out.println("member3.getAge() = " + member3.getAge());
             em.clear();
+            Member findMember1 = em.find(Member.class, member1.getId());
+            Member findMember2 = em.find(Member.class, member2.getId());
+            Member findMember3 = em.find(Member.class, member3.getId());
 
-            List<Member> resultList = em.createNamedQuery("Member.findByUsername", Member.class)
-                    .setParameter("username", "회원1")
-                    .getResultList();
-
-            for (Member member : resultList) {
-                System.out.println("member = " + member);
-            }
+            System.out.println("After member1.getAge() = " + findMember1.getAge());
+            System.out.println("After member2.getAge() = " + findMember2.getAge());
+            System.out.println("After member3.getAge() = " + findMember3.getAge());
 
             tx.commit();
         } catch (Exception e) {
